@@ -179,9 +179,6 @@ int main(int argc, char** argv)
   GifFileType * gif_filein = DGifOpenFileName(input_filename, NULL);
   if (!gif_filein)
   {
-    //fprintf(stderr, "Error opening gif file");
-    //return 1;
-
     exitnow(1, "Error opening gif file %s\n", input_filename);
   }
 
