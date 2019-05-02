@@ -169,7 +169,7 @@ int main(int argc, char** argv)
     //fprintf(stderr, "Error opening gif file");
     //return 1;
 
-    exitnow(1, "Error opening gif file %s", input_filename);
+    exitnow(1, "Error opening gif file %s\n", input_filename);
   }
 
   // create colormap mem to hold colors from colormap
@@ -181,21 +181,21 @@ int main(int argc, char** argv)
   if (colormap == NULL)
   {
     cleanup_res(&gif_filein, NULL, &colormap);
-    exitnow(1, "Error creating colormap object");
+    exitnow(1, "Error creating colormap object\n");
   }
 
   // check if input image has color map at all?
   if (gif_filein->SColorMap == NULL)
   {
     cleanup_res(&gif_filein, NULL, &colormap);
-    exitnow(1, "No colormap for %s", input_filename);
+    exitnow(1, "No colormap for %s\n", input_filename);
   }
 
   // check if colormap has at least 1 color
   if (gif_filein->SColorMap->ColorCount <= 0)
   {
     cleanup_res(&gif_filein, NULL, &colormap);
-    exitnow(1, "Error number of colors in colormap is 0");
+    exitnow(1, "Error number of colors in colormap is 0\n");
   }
 
   // form the target color
@@ -238,7 +238,7 @@ int main(int argc, char** argv)
       if (found)
       {
         cleanup_res(&gif_filein, NULL, &colormap);
-        exitnow(1, "There should not be duplicated transparent color in colormap. Quit now.");
+        exitnow(1, "There should not be duplicated transparent color in colormap. Quit now.\n");
       }
       else
       {
@@ -262,7 +262,7 @@ int main(int argc, char** argv)
   if (gif_fileout == NULL)
   {
     cleanup_res(&gif_filein, NULL, &colormap);
-    exitnow(1, "Error opening output file %s to write [error code: %d]", output_filename, error_code);
+    exitnow(1, "Error opening output file %s to write [error code: %d]\n", output_filename, error_code);
   }
 
   // put screen description
@@ -271,10 +271,10 @@ int main(int argc, char** argv)
         gif_filein->SHeight,
         gif_filein->SColorResolution,
         gif_filein->SBackGroundColor,
-        gif_filein->SColorMap) == GIF_ERROR)
+        colormap) == GIF_ERROR)
   {
     cleanup_res(&gif_filein, &gif_fileout, &colormap);
-    exitnow(1, "Cannot put screen description to output file %s", output_filename);
+    exitnow(1, "Cannot put screen description to output file %s\n", output_filename);
   }
 
   // read and handle each type of record accordingly
@@ -285,7 +285,7 @@ int main(int argc, char** argv)
     if (DGifGetRecordType(gif_filein, &record_type) == GIF_ERROR)
     {
       cleanup_res(&gif_filein, &gif_fileout, &colormap);
-      exitnow(1, "Error reading next record");
+      exitnow(1, "Error reading next record\n");
     }
 
     // variables used inside the switch block
@@ -300,7 +300,7 @@ int main(int argc, char** argv)
         if (DGifGetImageDesc(gif_filein) == GIF_ERROR)
         {
           cleanup_res(&gif_filein, &gif_fileout, &colormap);
-          exitnow(1, "Error getting image description");
+          exitnow(1, "Error getting image description\n");
         }
 
         // put same image description into output file
@@ -314,12 +314,11 @@ int main(int argc, char** argv)
             colormap) == GIF_ERROR)
         {
           cleanup_res(&gif_filein, &gif_fileout, &colormap);
-          exitnow(1, "Error putting image destination");
+          exitnow(1, "Error putting image destination\n");
         }
 
         int i;
         register GifPixelType* cp;
-        bool done_translation = false;
 
         GifPixelType* line = (GifPixelType*)malloc(gif_filein->Image.Width * sizeof(GifPixelType));
         for (i=0; i<gif_filein->Image.Height; ++i)
@@ -327,7 +326,7 @@ int main(int argc, char** argv)
           if (DGifGetLine(gif_filein, line, gif_filein->Image.Width) == GIF_ERROR)
           {
             cleanup_res(&gif_filein, &gif_fileout, &colormap);
-            exitnow(1, "Error getting line from input image");
+            exitnow(1, "Error getting line from input image\n");
           }
 
           // do translation (only one pixel for target transparent pixel)
@@ -348,7 +347,7 @@ int main(int argc, char** argv)
           if (EGifPutLine(gif_fileout, line, gif_filein->Image.Width) == GIF_ERROR)
           {
             cleanup_res(&gif_filein, &gif_fileout, &colormap);
-            exitnow(1, "Error putting line into output file");
+            exitnow(1, "Error putting line into output file\n");
           }
         }
         free(line);
@@ -360,7 +359,7 @@ int main(int argc, char** argv)
         if (DGifGetExtension(gif_filein, &extcode, &extension) == GIF_ERROR)
         {
           cleanup_res(&gif_filein, &gif_fileout, &colormap);
-          exitnow(1, "Error reading extension from input file");
+          exitnow(1, "Error reading extension from input file\n");
         }
         // check if extension is not available, then break now
         if (extension == NULL)
@@ -370,12 +369,12 @@ int main(int argc, char** argv)
         if (EGifPutExtensionLeader(gif_fileout, extcode) == GIF_ERROR)
         {
           cleanup_res(&gif_filein, &gif_fileout, &colormap);
-          exitnow(1, "Error putting extension leader");
+          exitnow(1, "Error putting extension leader\n");
         }
         if (EGifPutExtensionBlock(gif_fileout, extension[0], extension + 1) == GIF_ERROR)
         {
           cleanup_res(&gif_filein, &gif_fileout, &colormap);
-          exitnow(1, "Error putting extension block");
+          exitnow(1, "Error putting extension block\n");
         }
 
         while (extension != NULL)
@@ -383,14 +382,14 @@ int main(int argc, char** argv)
           if (DGifGetExtensionNext(gif_filein, &extension) == GIF_ERROR)
           {
             cleanup_res(&gif_filein, &gif_fileout, &colormap);
-            exitnow(1, "Error getting next extension");
+            exitnow(1, "Error getting next extension\n");
           }
           if (extension != NULL)
           {
             if (EGifPutExtensionBlock(gif_fileout, extension[0], extension + 1) == GIF_ERROR)
             {
               cleanup_res(&gif_filein, &gif_fileout, &colormap);
-              exitnow(1, "Error putting extension block");
+              exitnow(1, "Error putting extension block\n");
             }
           }
         }
@@ -398,7 +397,7 @@ int main(int argc, char** argv)
         if (EGifPutExtensionTrailer(gif_fileout) == GIF_ERROR)
         {
           cleanup_res(&gif_filein, &gif_fileout, &colormap);
-          exitnow(1, "Error putting extension block");
+          exitnow(1, "Error putting extension block\n");
         }
 
         break;
