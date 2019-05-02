@@ -20,6 +20,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 #include <gif_lib.h>
 
 // input/output filenames
@@ -143,7 +144,15 @@ int main(int argc, char** argv)
   // tcolorswap red-value green-value blue-value input-file output-file
   if (argc < 6)
   {
-    cli_print_usage();
+    if (argc >= 2 && strncmp(argv[1], "--help", 6) == 0)
+    {
+      cli_print_usage();
+    }
+    else
+    {
+      fprintf(stderr, "Not enough parameters entered!\n\n");
+      cli_print_usage();
+    }
     return 1;
   }
   else
