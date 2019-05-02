@@ -220,7 +220,7 @@ int main(int argc, char** argv)
   // note: local color map is not always available
   int num_color_colormap = colormap->ColorCount; 
 
-#ifndef
+#ifndef NDEBUG
   printf("[DEBUG] Colors: %d\n", num_color_colormap); 
 #endif
 
