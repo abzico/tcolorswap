@@ -6,14 +6,13 @@
  * You can batch process several images by executing this program via bash script.
  *
  * cli usage
- *  tcolorswap red-value green-value blue-value input-file [output-file]
+ *  tcolorswap red-value green-value blue-value input-file output-file
  * 
  * red-value    - red color component value
  * green-value  - green color component value
  * blue-value   - blue color component value
  * input-file   - input gif file to modify its color map
- * output-file  - (optional) output gif file to output the result, if not
- *                specified then it will write output in-place
+ * output-file  - output gif file to output the result
  *
  */
 
@@ -23,10 +22,11 @@
 #include <stdarg.h>
 #include <gif_lib.h>
 
-// TODO: accept the follwing through cli's parameter instead
-#define input_filename "input.gif"
-#define output_filename "output.gif"
-
+// input/output filenames
+static const char* input_filename = NULL;
+static const char* output_filename = NULL;
+// if no red/green/blue component values are specified
+// then these are the default values to be used
 static unsigned char trans_red = 0;
 static unsigned char trans_green = 253;
 static unsigned char trans_blue = 255;
@@ -59,6 +59,11 @@ static void free_mapobject(ColorMapObject* map);
  * This function will set NULL to input variables thus users don't have to manually set to NULL again after.
  */
 static void cleanup_res(GifFileType** filein, GifFileType** fileout, ColorMapObject** filein_mapobject);
+
+/**
+ * Print usage text of this program.
+ */
+static void cli_print_usage();
 
 /**
  * call exit() with specified status code, but print input `err_str_format` to standard error before exiting.
@@ -121,8 +126,41 @@ void cleanup_res(GifFileType** filein, GifFileType** fileout, ColorMapObject** f
   }
 }
 
+void cli_print_usage()
+{
+  printf("tcolorswap by Wasin Thonkaew (Angry Baozi Entertainment https://abzi.co\n\n");
+  printf("Usage: tcolorswap red-value green-value blue-value input-file output-file\n\n");
+  printf("  red-value    - red color component value\n");
+  printf("  green-value  - green color component value\n");
+  printf("  blue-value   - blue color component value\n");
+  printf("  input-file   - input gif file to modify its color map\n");
+  printf("  output-file  - output gif file to output the result\n");
+}
+
 int main(int argc, char** argv)
 {
+  // cli's arguments
+  // tcolorswap red-value green-value blue-value input-file output-file
+  if (argc < 6)
+  {
+    cli_print_usage();
+    return 1;
+  }
+  else
+  {
+    trans_red = (int)strtol(argv[1], NULL, 10);
+    trans_green = (int)strtol(argv[2], NULL, 10);
+    trans_blue = (int)strtol(argv[3], NULL, 10);
+
+    printf("%d %d %d\n", trans_red, trans_green, trans_blue);
+
+    input_filename = argv[4];
+    output_filename = argv[5];
+
+    printf("input filename '%s'\n", input_filename);
+    printf("output filename '%s'\n", output_filename);
+  }
+
   // open gif file
   // after it opens, it will fill up gif file structure with information like number of colors in colormap
   GifFileType * gif_filein = DGifOpenFileName(input_filename, NULL);
