@@ -161,13 +161,17 @@ int main(int argc, char** argv)
     trans_green = (int)strtol(argv[2], NULL, 10);
     trans_blue = (int)strtol(argv[3], NULL, 10);
 
-    printf("%d %d %d\n", trans_red, trans_green, trans_blue);
+#ifndef NDEBUG
+    printf("[DEBUG] %d %d %d\n", trans_red, trans_green, trans_blue);
+#endif
 
     input_filename = argv[4];
     output_filename = argv[5];
 
-    printf("input filename '%s'\n", input_filename);
-    printf("output filename '%s'\n", output_filename);
+#ifndef NDEBUG
+    printf("[DEBUG] input filename '%s'\n", input_filename);
+    printf("[DEBUG] output filename '%s'\n", output_filename);
+#endif
   }
 
   // open gif file
@@ -218,7 +222,10 @@ int main(int argc, char** argv)
   // color map always in RGB format, and has maximum of 256 colors in a single map
   // note: local color map is not always available
   int num_color_colormap = colormap->ColorCount; 
-  printf("Colors: %d\n", num_color_colormap); 
+
+#ifndef
+  printf("[DEBUG] Colors: %d\n", num_color_colormap); 
+#endif
 
   // access to the colormap's colors memory
   // **remember**: to access map object not directly here
@@ -418,14 +425,6 @@ int main(int argc, char** argv)
     }
   } while (record_type != TERMINATE_RECORD_TYPE);
 
-  // final print
-  ColorMapObject* chk_colormap= GifMakeMapObject(gif_fileout->SColorMap->ColorCount, gif_fileout->SColorMap->Colors);
-  for (int i=0; i<chk_colormap->ColorCount; ++i)
-  {
-    GifColorType c =  chk_colormap->Colors[i];
-    printf("colors[%d] = %3d %3d %3d\n", i, c.Red, c.Green, c.Blue);
-  }
-  
   cleanup_res(&gif_filein, &gif_fileout, &colormap);
   return 0;
 }
