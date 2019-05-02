@@ -15,8 +15,6 @@
  * output-file  - (optional) output gif file to output the result, if not
  *                specified then it will write output in-place
  *
- * TODO: add this later...
- *
  */
 
 #include <stdio.h>
@@ -144,12 +142,6 @@ int main(int argc, char** argv)
   colormap = GifMakeMapObject(gif_filein->SColorMap->ColorCount, gif_filein->SColorMap->Colors);
   if (colormap == NULL)
   {
-    //fprintf(stderr, "Error creating colormap object");
-    // close filein
-    //close_dgiffile(gif_filein);
-    //gif_filein = NULL;
-    //return 1;
-
     cleanup_res(&gif_filein, NULL, &colormap);
     exitnow(1, "Error creating colormap object");
   }
@@ -157,18 +149,6 @@ int main(int argc, char** argv)
   // check if input image has color map at all?
   if (gif_filein->SColorMap == NULL)
   {
-    // no color map at all, quit now
-    //fprintf(stderr, "There's no colormap for %s\n", input_filename);
-
-    //// free color map
-    //free_mapobject(colormap);
-    //colormap = NULL;
-    //// close filein
-    //close_dgiffile(gif_filein);
-    //gif_filein = NULL;
-
-    //return 1;
-
     cleanup_res(&gif_filein, NULL, &colormap);
     exitnow(1, "No colormap for %s", input_filename);
   }
@@ -176,17 +156,6 @@ int main(int argc, char** argv)
   // check if colormap has at least 1 color
   if (gif_filein->SColorMap->ColorCount <= 0)
   {
-    //fprintf(stderr, "Number of colors in colormap is 0\n");
-
-    //// free color map
-    //free_mapobject(colormap);
-    //colormap = NULL;
-    //// close filein
-    //close_dgiffile(gif_filein);
-    //gif_filein = NULL;
-
-    //return 1;
-
     cleanup_res(&gif_filein, NULL, &colormap);
     exitnow(1, "Error number of colors in colormap is 0");
   }
@@ -230,17 +199,6 @@ int main(int argc, char** argv)
       // error, we won't work with duplicated or shaded of colors variation of target transparent color
       if (found)
       {
-        //fprintf(stderr, "Cannot work on duplicated target transparent color for swapping. Quit now.\n");
-
-        //// free color map
-        //free_mapobject(colormap);
-        //colormap = NULL;
-        //// close filein
-        //close_dgiffile(gif_filein);
-        //gif_filein = NULL;
-
-        //return 1;
-
         cleanup_res(&gif_filein, NULL, &colormap);
         exitnow(1, "There should not be duplicated transparent color in colormap. Quit now.");
       }
@@ -253,8 +211,6 @@ int main(int argc, char** argv)
         marked_posidx = i;
       }
     }
-
-    //printf("colors[%d] = %3d %3d %3d\n", i, c.Red, c.Green, c.Blue);
   }
 
   // swap the color to first position of colormap
@@ -262,28 +218,11 @@ int main(int argc, char** argv)
   filein_colors[marked_posidx] = filein_colors[0];
   filein_colors[0] = temp_color;
 
-  //for (int i=0; i<num_color_colormap; ++i)
-  //{
-  //  GifColorType c = filein_colors[i];
-  //  printf("colors[%d] = %3d %3d %3d\n", i, c.Red, c.Green, c.Blue);
-  //}
-  
   // now we're ready to write to output file
   int error_code;
   GifFileType* gif_fileout = EGifOpenFileName(output_filename, false, &error_code);
   if (gif_fileout == NULL)
   {
-    //fprintf(stderr, "Error opening output file %s to write [error code: %d]\n", output_filename, error_code);
-
-    //// free color map
-    //free_mapobject(colormap);
-    //colormap = NULL;
-    //// close filein
-    //close_dgiffile(gif_filein);
-    //gif_filein = NULL;
-
-    //return 1;
-
     cleanup_res(&gif_filein, NULL, &colormap);
     exitnow(1, "Error opening output file %s to write [error code: %d]", output_filename, error_code);
   }
@@ -296,20 +235,6 @@ int main(int argc, char** argv)
         gif_filein->SBackGroundColor,
         gif_filein->SColorMap) == GIF_ERROR)
   {
-    //fprintf("Cannot put screen description to output file %s\n", output_filename);
-
-    //// free color map
-    //free_mapobject(colormap);
-    //colormap = NULL;
-    //// close filein
-    //close_dgiffile(gif_filein);
-    //gif_filein = NULL;
-    //// close fileout
-    //close_egiffile(gif_fileout);
-    //gif_fileout = NULL;
-
-    //return 1;
-
     cleanup_res(&gif_filein, &gif_fileout, &colormap);
     exitnow(1, "Cannot put screen description to output file %s", output_filename);
   }
@@ -321,22 +246,6 @@ int main(int argc, char** argv)
     // read next record
     if (DGifGetRecordType(gif_filein, &record_type) == GIF_ERROR)
     {
-      //fprintf(stderr, "Error reading next record\n");
-
-      //// TODO: refactor this section of code into one function ...
-      //// error, clean up and return now
-      //// free color map
-      //free_mapobject(colormap);
-      //colormap = NULL;
-      //// close filein
-      //close_dgiffile(gif_filein);
-      //gif_filein = NULL;
-      //// close fileout
-      //close_egiffile(gif_fileout);
-      //gif_fileout = NULL;
-
-      //return 1;
-
       cleanup_res(&gif_filein, &gif_fileout, &colormap);
       exitnow(1, "Error reading next record");
     }
@@ -352,21 +261,6 @@ int main(int argc, char** argv)
         // read in image description from input file
         if (DGifGetImageDesc(gif_filein) == GIF_ERROR)
         {
-          //fprintf(stderr, "Error getting image description\n");
-
-          //// error, clean up and return now
-          //// free color map
-          //free_mapobject(colormap);
-          //colormap = NULL;
-          //// close filein
-          //close_dgiffile(gif_filein);
-          //gif_filein = NULL;
-          //// close fileout
-          //close_egiffile(gif_fileout);
-          //gif_fileout = NULL;
-
-          //return 1;
-
           cleanup_res(&gif_filein, &gif_fileout, &colormap);
           exitnow(1, "Error getting image description");
         }
@@ -384,36 +278,6 @@ int main(int argc, char** argv)
           cleanup_res(&gif_filein, &gif_fileout, &colormap);
           exitnow(1, "Error putting image destination");
         }
-
-        // read data that residing on input gif image then output into destination image
-        // read without decoding (faster)
-        //int codesize = 0;
-        //GifByteType* codeblock;
-        //if (DGifGetCode(gif_filein, &codesize, &codeblock) == GIF_ERROR)
-        //{
-        //  cleanup_res(&gif_filein, &gif_fileout, &colormap);
-        //  exitnow(1, "Error getting code from input file");
-        //}
-        //if (EGifPutCode(gif_fileout, codesize, codeblock) == GIF_ERROR)
-        //{
-        //  cleanup_res(&gif_filein, &gif_fileout, &colormap);
-        //  exitnow(1, "Error putting code into output file");
-        //}
-        //while (codeblock != NULL)
-        //{
-        //  // read code-next from input file
-        //  if (DGifGetCodeNext(gif_filein, &codeblock) == GIF_ERROR)
-        //  {
-        //    cleanup_res(&gif_filein, &gif_fileout, &colormap);
-        //    exitnow(1, "Error reading code-next from input file");
-        //  }
-        //  // put code-next to output file
-        //  if (EGifPutCodeNext(gif_fileout, codeblock) == GIF_ERROR)
-        //  {
-        //    cleanup_res(&gif_filein, &gif_fileout, &colormap);
-        //    exitnow(1, "Error putting code-next into output file");
-        //  }
-        //}
 
         int i;
         register GifPixelType* cp;
