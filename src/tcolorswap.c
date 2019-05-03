@@ -344,7 +344,7 @@ int main(int argc, char** argv)
 
           // do translation (only one pixel for target transparent pixel)
           // this happens only once
-          for (cp = line; cp < line + gif_filein->Image.Height; ++cp)
+          for (cp = line; cp < line + gif_filein->Image.Width; ++cp)
           {
             if (*cp == marked_posidx)
             {
