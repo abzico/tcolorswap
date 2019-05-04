@@ -278,6 +278,9 @@ int main(int argc, char** argv)
     exitnow(1, "Error opening output file %s to write [error code: %d]\n", output_filename, error_code);
   }
 
+  // set gif version to GIF89
+  EGifSetGifVersion(gif_fileout, true);
+
   // put screen description
   if(EGifPutScreenDesc(gif_fileout,
         gif_filein->SWidth,
@@ -324,7 +327,7 @@ int main(int argc, char** argv)
             gif_filein->Image.Width,
             gif_filein->Image.Height,
             gif_filein->Image.Interlace,
-            colormap) == GIF_ERROR)
+            gif_filein->Image.ColorMap) == GIF_ERROR)
         {
           cleanup_res(&gif_filein, &gif_fileout, &colormap);
           exitnow(1, "Error putting image destination\n");
