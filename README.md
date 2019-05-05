@@ -19,5 +19,14 @@ Command line usage
 * `input-file`   - input gif file to modify its color map
 * `output-file`  - output gif file to output the result
 
+# Build Instruction
+
+* `./autogen.sh`
+* `./configure`
+* `make -j4`
+* `sudo make install`
+
+Now you can execute the command, see _Usage_ section for more information.
+
 # LICENSE
 MIT, Angry Baozi [https://abzi.co](https://abzi.co)
