@@ -104,6 +104,9 @@ void exitnow(int status, const char* err_str_format, ...)
   vfprintf(stderr, err_str_format, arg_list);
 
   va_end(arg_list);
+
+  // exit with specified status code
+  exit(status);
 }
 
 void cleanup_res(GifFileType** filein, GifFileType** fileout, ColorMapObject** filein_mapobject)
@@ -262,6 +265,13 @@ int main(int argc, char** argv)
         marked_posidx = i;
       }
     }
+  }
+
+  // if not found, clean resource and exit now
+  if (!found)
+  {
+    cleanup_res(&gif_filein, NULL, &colormap);
+    exitnow(1, "Not found target color to rearrange in colormap. Quit now.\n");
   }
 
   // swap the color to first position of colormap
